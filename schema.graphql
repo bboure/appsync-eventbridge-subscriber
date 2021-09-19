@@ -1,0 +1,47 @@
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  sendEvent(event: EventBridgeMessageInput!): EventBridgeMessage @aws_iam
+}
+
+type Subscription {
+  subscribe(
+    source: String
+    detailType: String
+    account: String
+    resources: [String!]
+  ): EventBridgeMessage
+    @aws_subscribe(mutations: ["sendEvent"])
+}
+
+type EventBridgeMessage @aws_iam @aws_api_key {
+  id: ID!
+  version: String!
+  detailType: String!
+  source: String!
+  account: String!
+  time: AWSDateTime!
+  region: String!
+  resources: [String!]
+  detail: AWSJSON!
+}
+
+input EventBridgeMessageInput {
+  id: ID!
+  version: String!
+  detailType: String!
+  source: String!
+  account: String!
+  time: AWSDateTime!
+  region: String!
+  resources: [String!]
+  detail: AWSJSON!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}

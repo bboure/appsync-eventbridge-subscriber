@@ -1,0 +1,62 @@
+service: appsync-eventbridge-subscriber
+
+plugins:
+  - serverless-appsync-plugin
+  - serverless-esbuild
+  - serverless-iam-roles-per-function
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  memorySize: 256
+  eventBridge:
+    useCloudFormation: true
+
+custom:
+  appSync:
+    name: appsync-eventbridge-subscriber
+    authenticationType: API_KEY
+    additionalAuthenticationProviders:
+      - authenticationType: AWS_IAM
+
+    logConfig:
+      level: ALL
+
+    dataSources:
+      - type: NONE
+        name: none
+
+    mappingTemplates:
+      - kind: UNIT
+        dataSource: none
+        type: Mutation
+        field: sendEvent
+        request: Mutation.sendEvent.request.vtl
+        response: Mutation.sendEvent.response.vtl
+
+    apiKeys:
+      - name: EventBridge
+        expiresAfter: 1y
+
+functions:
+  processEvent:
+    name: processEvent
+    handler: src/processEvent.handler
+    timeout: 30
+    environment:
+      APPSYNC_ENDPOINT: !GetAtt GraphQlApi.GraphQLUrl
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - appsync:GraphQL
+        Resource:
+          - !Ref GraphQlApi
+          - !Join ['/', [!Ref GraphQlApi, '*']]
+    events:
+      - eventBridge:
+          # capture all events
+          pattern:
+            detail-type:
+              - { "exists": true  }

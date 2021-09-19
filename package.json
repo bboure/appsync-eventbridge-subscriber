@@ -1,0 +1,24 @@
+{
+  "name": "appsync-eventbridge-subscription",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-appsync": "^4.1.1",
+    "cross-fetch": "^3.1.4",
+    "graphql": "^15.5.3",
+    "graphql-tag": "^2.12.5",
+    "serverless": "^2.59.0",
+    "serverless-appsync-plugin": "^1.12.0",
+    "serverless-esbuild": "^1.18.1",
+    "serverless-iam-roles-per-function": "^3.2.0"
+  },
+  "devDependencies": {
+    "aws-lambda": "^1.0.6"
+  }
+}
